@@ -76,7 +76,7 @@ resourcePolicy:
           expr: R.attr.type == "task_manager"
 
     - actions: ["read"]
-      effect: EFFECT_DENY
+      effect: EFFECT_ALLOW
       derivedRoles:
         - TASK_CREATOR
       condition:
