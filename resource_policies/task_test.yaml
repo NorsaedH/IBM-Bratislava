@@ -1,0 +1,203 @@
+name: Tasks test suite
+description: Tests for verifying the task resource policy
+
+tests:
+  - name: User Tests
+    input:
+      principals:
+        - sally-user
+      resources:
+        - task-manager
+        - task-1
+        - task-2
+      actions:
+        - create
+        - read
+        - update
+        - delete
+
+    expected:
+      - principal: sally-user
+        resource: task-manager
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_DENY
+          update: EFFECT_DENY
+          delete:  EFFECT_DENY
+
+      - principal: sally-user
+        resource: task-1
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete:  EFFECT_DENY
+
+      - principal: sally-user
+        resource: task-2
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_DENY
+          update: EFFECT_DENY
+          delete:  EFFECT_DENY
+
+  - name: Agency User Tests
+    input:
+      principals:
+        - ian-agency-user
+      resources:
+        - task-manager
+        - task-1
+        - task-2
+      actions:
+        - create
+        - read
+        - update
+        - delete
+
+    expected:
+      - principal: ian-agency-user
+        resource: task-manager
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_DENY
+          update: EFFECT_DENY
+          delete:  EFFECT_DENY
+
+      - principal: ian-agency-user
+        resource: task-1
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_DENY
+          update: EFFECT_DENY
+          delete:  EFFECT_DENY
+
+      - principal: ian-agency-user
+        resource: task-2
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_DENY
+          update: EFFECT_DENY
+          delete:  EFFECT_DENY
+
+  - name: Task Creator Tests
+    input:
+      principals:
+        - frank-task-creator
+      resources:
+        - task-manager
+        - task-1
+        - task-2
+      actions:
+        - create
+        - read
+        - update
+        - delete
+
+    expected:
+      - principal: frank-task-creator
+        resource: task-manager
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_DENY
+          update: EFFECT_DENY
+          delete:  EFFECT_DENY
+
+      - principal: frank-task-creator
+        resource: task-1
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete:  EFFECT_DENY
+
+      - principal: frank-task-creator
+        resource: task-2
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_DENY
+          delete:  EFFECT_ALLOW
+
+  - name: Manager Tests
+    input:
+      principals:
+        - derek-manager
+      resources:
+        - task-manager
+        - task-1
+        - task-2
+      actions:
+        - create
+        - read
+        - update
+        - delete
+
+    expected:
+      - principal: derek-manager
+        resource: task-manager
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_DENY
+          update: EFFECT_DENY
+          delete:  EFFECT_DENY
+
+      - principal: derek-manager
+        resource: task-1
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete:  EFFECT_DENY
+
+      - principal: derek-manager
+        resource: task-2
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_DENY
+          delete:  EFFECT_ALLOW
+
+  - name: System Admin Tests
+    input:
+      principals:
+        - simon-system-admin
+      resources:
+        - task-manager
+        - task-1
+        - task-2
+      actions:
+        - create
+        - read
+        - update
+        - delete
+
+    expected:
+      - principal: simon-system-admin
+        resource: task-manager
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete:  EFFECT_ALLOW
+
+      - principal: simon-system-admin
+        resource: task-1
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete:  EFFECT_ALLOW
+
+      - principal: simon-system-admin
+        resource: task-2
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete:  EFFECT_ALLOW
+
+
+
+          
+

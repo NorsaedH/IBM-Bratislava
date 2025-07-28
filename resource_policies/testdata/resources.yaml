@@ -1,0 +1,48 @@
+resources:
+  task-manager:
+    id: task_manager
+    kind: task
+    attr:
+      type: task_manager
+
+  task-1:
+    id: task_1
+    kind: task
+    attr:
+      status: in_progress
+      region: NA
+      ownedBy: sally_user
+      type: task
+
+  task-2:
+    id: task_2
+    kind: task
+    attr:
+      status: draft
+      region: EMEA
+      ownedBy: frank_task_creator
+      type: task
+
+  task-approval-manager:
+    id: task_approval_manager
+    kind: task_approval
+    attr:
+      type: task_approval_manager
+
+  task-approval-1:
+    id: task_approval_1
+    kind: task_approval
+    attr:
+      status: completed
+      region: APAC
+      ownedBy: john_user
+      type: task_approval
+
+  task-approval-2:
+    id: task_approval_2
+    kind: task_approval
+    attr:
+      status: pending
+      region: NA
+      ownedBy: sally_user
+      type: task_approval

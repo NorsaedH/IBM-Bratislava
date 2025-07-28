@@ -1,0 +1,203 @@
+name: Task Approvals test suite
+description: Tests for verifying the task_approval resource policy
+
+tests:
+  - name: User Tests
+    input:
+      principals:
+        - sally-user
+      resources:
+        - task-approval-manager
+        - task-approval-1
+        - task-approval-2
+      actions:
+        - create
+        - read
+        - update
+        - delegate
+
+    expected:
+      - principal: sally-user
+        resource: task-approval-manager
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_DENY
+          update: EFFECT_DENY
+          delegate:  EFFECT_DENY
+
+      - principal: sally-user
+        resource: task-approval-1
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_DENY
+          update: EFFECT_DENY
+          delegate:  EFFECT_DENY
+
+      - principal: sally-user
+        resource: task-approval-2
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delegate:  EFFECT_DENY
+
+  - name: Agency User Tests
+    input:
+      principals:
+        - ian-agency-user
+      resources:
+        - task-approval-manager
+        - task-approval-1
+        - task-approval-2
+      actions:
+        - create
+        - read
+        - update
+        - delegate
+
+    expected:
+      - principal: ian-agency-user
+        resource: task-approval-manager
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_DENY
+          update: EFFECT_DENY
+          delegate:  EFFECT_DENY
+
+      - principal: ian-agency-user
+        resource: task-approval-1
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_DENY
+          delegate:  EFFECT_DENY
+
+      - principal: ian-agency-user
+        resource: task-approval-2
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_DENY
+          update: EFFECT_DENY
+          delegate:  EFFECT_DENY
+
+  - name: Task Creator Tests
+    input:
+      principals:
+        - frank-task-creator
+      resources:
+        - task-approval-manager
+        - task-approval-1
+        - task-approval-2
+      actions:
+        - create
+        - read
+        - update
+        - delegate
+
+    expected:
+      - principal: frank-task-creator
+        resource: task-approval-manager
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_DENY
+          update: EFFECT_DENY
+          delegate:  EFFECT_DENY
+
+      - principal: frank-task-creator
+        resource: task-approval-1
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_DENY
+          delegate:  EFFECT_DENY
+
+      - principal: frank-task-creator
+        resource: task-approval-2
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delegate:  EFFECT_ALLOW
+
+  - name: Manager Tests
+    input:
+      principals:
+        - derek-manager
+      resources:
+        - task-approval-manager
+        - task-approval-1
+        - task-approval-2
+      actions:
+        - create
+        - read
+        - update
+        - delegate
+
+    expected:
+      - principal: derek-manager
+        resource: task-approval-manager
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_DENY
+          update: EFFECT_DENY
+          delegate:  EFFECT_DENY
+
+      - principal: derek-manager
+        resource: task-approval-1
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_DENY
+          delegate:  EFFECT_ALLOW
+
+      - principal: derek-manager
+        resource: task-approval-2
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delegate:  EFFECT_ALLOW
+
+  - name: System Admin Tests
+    input:
+      principals:
+        - simon-system-admin
+      resources:
+        - task-approval-manager
+        - task-approval-1
+        - task-approval-2
+      actions:
+        - create
+        - read
+        - update
+        - delegate
+
+    expected:
+      - principal: simon-system-admin
+        resource: task-approval-manager
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delegate:  EFFECT_ALLOW
+
+      - principal: simon-system-admin
+        resource: task-approval-1
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delegate:  EFFECT_ALLOW
+
+      - principal: simon-system-admin
+        resource: task-approval-2
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delegate:  EFFECT_ALLOW
+
+
+
+          
+

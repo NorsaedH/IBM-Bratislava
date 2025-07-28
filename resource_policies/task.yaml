@@ -1,0 +1,156 @@
+---
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  version: "default"
+  # Importing `common_roles` in so they can be used in the resource policy.
+  importDerivedRoles:
+    - common_roles
+
+  # This resource file is reviewed for when checking permissions when a resource
+  # is of `kind` "task:object"
+  resource: "task"
+
+# ┌───────────────┬────────┬────────────────────────┬────────────────────┬────────────────────────────────────────────────┬──────────────────────────────┬────────────────────┐
+# │ Resource Type │ Action │ User                   │ Agency User        │ Task Creator                                   │ Manager                      │ System Admin       │
+# ├───────────────┼────────┼────────────────────────┼────────────────────┼────────────────────────────────────────────────┼──────────────────────────────┼────────────────────┤
+# │ Task          │ create │ ✔                     |                    │ ✔                                              │ ✔                            │ ✔                 │
+# │               │ read   │ if owner               │ if assigned region │ if owner or assigned task or assigned region   │ ✔                            │ ✔                 │
+# │               │ update │ if owner AND status is │                    │ if (owner OR assigned task OR assigned region) │ if status is “in_progress”   │ ✔                  |
+# │               │        │ “in_progress”          │                    │ AND status is “in_progress”                    │                              │                    │
+# │               │ delete │ if owner AND status is │                    │ if (owner OR assigned task OR assigned region) │ if status is “draft”         │ ✔                  │
+# │               │        │ “draft”                │                    │ AND status is “draft”                          │                              │                    │
+# └───────────────┴────────┴────────────────────────┴────────────────────┴────────────────────────────────────────────────┴──────────────────────────────┴────────────────────┘
+
+  rules:
+    - actions: ["create"]
+      effect: EFFECT_ALLOW
+      roles:
+        - USER
+      condition:
+        match:
+          expr: R.attr.type == "task_manager"
+
+    - actions: ["read"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - OWNER
+
+    - actions: ["update"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - OWNER
+      condition:
+        match:
+          expr: R.attr.status == "in_progress"
+
+    - actions: ["delete"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - OWNER
+      condition:
+        match:
+          expr: R.attr.status == "draft"
+
+    - actions: ["create"]
+      effect: EFFECT_DENY
+      derivedRoles:
+        - AGENCY_USER
+      output:
+        expr: |-
+          {"principal": P.id, "resource": R.id, "message": "Agency users cannot create a task."}
+
+    - actions: ["read"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - AGENCY_USER
+      condition:
+        match:
+          expr: R.attr.region == P.attr.region
+
+    - actions: ["create"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - TASK_CREATOR
+      condition:
+        match:
+          expr: R.attr.type == "task_manager"
+
+    - actions: ["read"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - TASK_CREATOR
+      condition:
+        match:
+          any:
+            of:
+              - expr: R.attr.ownedBy == P.id
+              - expr: R.id in P.attr.assigned_tasks
+              - expr: R.attr.region == P.attr.region
+
+    - actions: ["update"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - TASK_CREATOR
+      condition:
+        match:
+          all:
+            of:
+              - expr: R.attr.ownedBy == P.id || R.id in P.attr.assigned_tasks || R.attr.region == P.attr.region 
+              - expr: R.attr.status == "in_progress"
+
+
+    - actions: ["delete"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - TASK_CREATOR
+      condition:
+        match:
+          all:
+            of:
+              - expr: R.attr.ownedBy == P.id || R.id in P.attr.assigned_tasks || R.attr.region == P.attr.region 
+              - expr: R.attr.status == "draft"
+
+    - actions: ["create"]
+      effect: EFFECT_ALLOW
+      roles:
+        - MANAGER
+      derivedRoles:
+        - SYSTEM_ADMIN
+      condition:
+        match:
+          expr: R.attr.type == "task_manager"
+
+    - actions: ["read"]
+      effect: EFFECT_ALLOW
+      roles:
+        - MANAGER
+      condition:
+        match:
+          expr: R.attr.type != "task_manager"
+
+    - actions: ["update"]
+      effect: EFFECT_ALLOW
+      roles:
+        - MANAGER
+      condition:
+        match:
+          all:
+            of:
+              - expr: R.attr.type != "task_manager"
+              - expr: R.attr.status == "in_progress"
+
+    - actions: ["delete"]
+      effect: EFFECT_ALLOW
+      roles:
+        - MANAGER
+      condition:
+        match:
+          all:
+            of:
+              - expr: R.attr.type != "task_manager"
+              - expr: R.attr.status == "draft"
+
+    - actions: ["read", "update", "delete"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - SYSTEM_ADMIN

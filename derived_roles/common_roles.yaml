@@ -1,0 +1,31 @@
+---
+apiVersion: api.cerbos.dev/v1
+description: |-
+  Common dynamic roles used within the IBM Bratislava Demo app
+derivedRoles:
+  name: common_roles
+  definitions:
+    - name: OWNER
+      parentRoles: ["USER"]
+      condition:
+        match:
+          expr: R.attr.ownedBy == P.id
+
+    - name: AGENCY_USER
+      parentRoles: ["USER"]
+      condition:
+        match:
+          expr: ("AGENCY" in P.attr.group)
+
+    - name: TASK_CREATOR
+      parentRoles: ["CREATOR"]
+      condition:
+        match:
+          expr: ("TASK" in P.attr.group)
+
+    - name: SYSTEM_ADMIN
+      parentRoles: ["ADMIN"]
+      condition:
+        match:
+          expr: ("SYSTEM" in P.attr.group)
+

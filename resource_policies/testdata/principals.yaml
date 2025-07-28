@@ -1,0 +1,39 @@
+principals:
+  sally-user:
+    id: sally_user
+    roles:
+    - USER
+    attr:
+      owned_tasks: ["task_1", "task_4"]
+
+  ian-agency-user:
+    id: ian_agency_user
+    roles:
+    - USER
+    attr:
+      group: ["AGENCY"]
+      region: APAC
+
+  frank-task-creator:
+    id: frank_task_creator
+    roles:
+    - CREATOR
+    attr:
+      group: ["TASK"]
+      region: NA
+      assigned_tasks: ["task_1", "task_4"]
+      assigned_task_approvals: ["task_approval_1", "task_approval_2"]
+      isAuthorizedToDelegate: true
+
+  derek-manager:
+    id: derek_manager
+    roles:
+    - MANAGER
+
+  simon-system-admin:
+    id: simon_system_admin
+    roles:
+    - ADMIN
+    attr:
+      group: ["SYSTEM"]
+
